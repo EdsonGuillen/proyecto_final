@@ -10,12 +10,21 @@ import 'providers/theme_provider.dart';
 import 'screens/auth_gate.dart';
 import 'screens/onboarding_screen.dart';
 import 'theme/app_theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
+
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
+  await Supabase.initialize(
+    url: 'https://entwhrbqojimojwnnkfl.supabase.co',
+    anonKey: 'sb_publishable_tn-RIWQswTPSOBnVXY4H4A_ZV1-Y9Wj',
+    );
 
   final theme = ThemeProvider();
   final onboarding = OnboardingProvider();
