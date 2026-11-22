@@ -7,14 +7,14 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-    final VoidCallback onAdd;
+  final VoidCallback onAdd;
 
   const ProductCard({
     super.key,
     required this.product,
     required this.onEdit,
     required this.onDelete,
-        required this.onAdd,
+    required this.onAdd,
   });
 
   @override
@@ -29,14 +29,17 @@ class ProductCard extends StatelessWidget {
             Expanded(
               child: product.imagenUrl.isEmpty
                   ? const Center(child: Icon(Icons.inventory_2, size: 48))
-                  : CachedNetworkImage(
-                      imageUrl: product.imagenUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                  : Hero(
+                      tag: 'producto-${product.id}',
+                      child: CachedNetworkImage(
+                        imageUrl: product.imagenUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (_, __, ___) =>
+                            const Center(child: Icon(Icons.broken_image)),
                       ),
-                      errorWidget: (_, __, ___) =>
-                          const Center(child: Icon(Icons.broken_image)),
                     ),
             ),
             Padding(
@@ -57,7 +60,7 @@ class ProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
-                                    Row(
+                  Row(
                     children: [
                       Expanded(
                         child: Text('\$${product.precio.toStringAsFixed(2)}'),

@@ -80,9 +80,17 @@ class CartScreen extends StatelessWidget {
                               Text('Total',
                                   style:
                                       Theme.of(context).textTheme.titleLarge),
-                              Text('\$${cart.total.toStringAsFixed(2)}',
+                                                            AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                transitionBuilder: (child, anim) =>
+                                    ScaleTransition(scale: anim, child: child),
+                                child: Text(
+                                  '\$${cart.total.toStringAsFixed(2)}',
+                                  key: ValueKey(cart.total),
                                   style:
-                                      Theme.of(context).textTheme.titleLarge),
+                                      Theme.of(context).textTheme.titleLarge,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 12),

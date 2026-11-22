@@ -27,9 +27,12 @@ class _FormView extends StatelessWidget {
     if (f.imageBytes != null) {
       return Image.memory(f.imageBytes!, fit: BoxFit.cover);
     }
-    final url = product?.imagenUrl ?? '';
+        final url = product?.imagenUrl ?? '';
     if (url.isNotEmpty) {
-      return CachedNetworkImage(imageUrl: url, fit: BoxFit.cover);
+      return Hero(
+        tag: 'producto-${product!.id}',
+        child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover),
+      );
     }
     return Container(
       color: Colors.grey.withValues(alpha: 0.2),
