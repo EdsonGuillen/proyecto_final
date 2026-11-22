@@ -7,12 +7,14 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+    final VoidCallback onAdd;
 
   const ProductCard({
     super.key,
     required this.product,
     required this.onEdit,
     required this.onDelete,
+        required this.onAdd,
   });
 
   @override
@@ -55,10 +57,17 @@ class ProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    Row(
                     children: [
-                      Text('\$${product.precio.toStringAsFixed(2)}'),
+                      Expanded(
+                        child: Text('\$${product.precio.toStringAsFixed(2)}'),
+                      ),
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        tooltip: 'Agregar al carrito',
+                        icon: const Icon(Icons.add_shopping_cart),
+                        onPressed: onAdd,
+                      ),
                       PopupMenuButton<String>(
                         onSelected: (v) => v == 'edit' ? onEdit() : onDelete(),
                         itemBuilder: (_) => const [
