@@ -31,7 +31,7 @@ consultar pedidos y recibir notificaciones push.
    flutter configure
 3. Ejecuta en un dispositivo Android:
    flutter run
-4. 4. Opcional, para usar Stripe en modo de prueba (sin esta clave los pagos
+4. Opcional, para usar Stripe en modo de prueba (sin esta clave los pagos
    funcionan en modo simulado):
    flutter run --dart-define=STRIPE_SECRET_KEY=sk_test_TU_CLAVE
 
@@ -51,5 +51,3 @@ Usa cualquier fecha futura y cualquier CVV. No uses tarjetas reales.
   `ofertas`, `novedades` y `avisos`.
 - El cobro con Stripe se hace desde la app solo para pruebas; en producción
   debe hacerlo un servidor.
-
-5. Ejecuta en un dispositivo Android:
