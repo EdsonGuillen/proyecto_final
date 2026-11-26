@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/form_fields_provider.dart';
 import '../providers/theme_provider.dart';
+import '../theme/app_inputs.dart';
+import '../widgets/auth_scaffold.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 
@@ -27,127 +29,128 @@ class _LoginView extends StatelessWidget {
     final f = context.watch<FormFieldsProvider>();
     final auth = context.watch<AuthProvider>();
     final isDark = context.watch<ThemeProvider>().isDark;
+    final s = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Iniciar sesión'),
-        actions: [
-          IconButton(
-            icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () => context.read<ThemeProvider>().toggle(),
-          ),
-        ],
+    return AuthScaffold(
+      title: 'Bienvenido a Gema',
+      subtitle: 'Productos artesanales hechos con cariño',
+      topRight: IconButton(
+        tooltip: isDark ? 'Modo claro' : 'Modo oscuro',
+        icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode,
+            color: s.onPrimary),
+        onPressed: () => context.read<ThemeProvider>().toggle(),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Form(
-              key: f.formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: f.email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Correo',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: FormFieldsProvider.validateEmail,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: f.password,
-                    obscureText: f.obscure,
-                    decoration: InputDecoration(
-                      labelText: 'Contraseña',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(f.obscure
-                            ? Icons.visibility
-                            : Icons.visibility_off),
-                        onPressed: f.toggleObscure,
-                      ),
-                    ),
-                    validator: FormFieldsProvider.validatePassword,
-                  ),
-                  if (auth.error != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      auth.error!,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.error),
-                    ),
-                  ],
-                  const SizedBox(height: 20),
-                  FilledButton(
-                    onPressed: auth.loading
-                        ? null
-                        : () {
-                            if (f.validate()) {
-                              auth.login(f.email.text.trim(), f.password.text);
-                            }
-                          },
-                    child: auth.loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Entrar'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      auth.clearMessages();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const ForgotPasswordScreen()),
-                      );
+      child: Form(
+        key: f.formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextFormField(
+              controller: f.email,
+              keyboardType: TextInputType.emailAddress,
+              decoration:
+                  appInput(context, 'Correo', icon: Icons.email_outlined),
+              validator: FormFieldsProvider.validateEmail,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: f.password,
+              obscureText: f.obscure,
+              decoration: appInput(
+                context,
+                'Contraseña',
+                icon: Icons.lock_outline,
+                suffix: IconButton(
+                  icon: Icon(
+                      f.obscure ? Icons.visibility : Icons.visibility_off),
+                  onPressed: f.toggleObscure,
+                ),
+              ),
+              validator: FormFieldsProvider.validatePassword,
+            ),
+            if (auth.error != null) ...[
+              const SizedBox(height: 12),
+              AuthMessage(auth.error!),
+            ],
+            const SizedBox(height: 20),
+            FilledButton(
+              onPressed: auth.loading
+                  ? null
+                  : () {
+                      if (f.validate()) {
+                        auth.login(f.email.text.trim(), f.password.text);
+                      }
                     },
-                    child: const Text('¿Olvidaste tu contraseña?'),
-                  ),
-                  const SizedBox(height: 8),
-const Row(
-  children: [
-    Expanded(child: Divider()),
-    Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8),
-      child: Text('o continúa con'),
-    ),
-    Expanded(child: Divider()),
-  ],
-),
-const SizedBox(height: 12),
-OutlinedButton.icon(
-  onPressed: auth.loading ? null : auth.signInWithGoogle,
-  icon: const Icon(Icons.g_mobiledata, size: 28),
-  label: const Text('Google'),
-),
-const SizedBox(height: 8),
-OutlinedButton.icon(
-  onPressed: auth.loading ? null : auth.signInWithGithub,
-  icon: const Icon(Icons.code),
-  label: const Text('GitHub'),
-),
-                  TextButton(
-                    onPressed: () {
-                      auth.clearMessages();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterScreen()),
-                      );
-                    },
-                    child: const Text('Crear cuenta'), 
-                  ),
-                ],
+              child: auth.loading
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: s.onPrimary),
+                    )
+                  : const Text('Entrar'),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  auth.clearMessages();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const ForgotPasswordScreen()),
+                  );
+                },
+                child: const Text('¿Olvidaste tu contraseña?'),
               ),
             ),
-          ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Expanded(child: Divider()),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    'o continúa con',
+                    style: TextStyle(color: s.onSurface.withValues(alpha: 0.6)),
+                  ),
+                ),
+                const Expanded(child: Divider()),
+              ],
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: auth.loading ? null : auth.signInWithGoogle,
+              icon: const Icon(Icons.g_mobiledata, size: 28),
+              label: const Text('Google'),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              onPressed: auth.loading ? null : auth.signInWithGithub,
+              icon: const Icon(Icons.code),
+              label: const Text('GitHub'),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text('¿Aún no tienes cuenta?',
+                    style: TextStyle(color: s.onSurface.withValues(alpha: 0.7))),
+                TextButton(
+                  onPressed: () {
+                    auth.clearMessages();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text('Crear cuenta'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

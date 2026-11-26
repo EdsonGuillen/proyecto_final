@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/form_fields_provider.dart';
+import '../theme/app_inputs.dart';
+import '../widgets/auth_scaffold.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
@@ -24,60 +26,41 @@ class _ForgotView extends StatelessWidget {
     final f = context.watch<FormFieldsProvider>();
     final auth = context.watch<AuthProvider>();
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Recuperar contraseña')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Form(
-              key: f.formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Escribe tu correo y te enviaremos un enlace para '
-                    'restablecer tu contraseña.',
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: f.email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Correo',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: FormFieldsProvider.validateEmail,
-                  ),
-                  if (auth.error != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      auth.error!,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.error),
-                    ),
-                  ],
-                  if (auth.info != null) ...[
-                    const SizedBox(height: 12),
-                    Text(auth.info!),
-                  ],
-                  const SizedBox(height: 20),
-                  FilledButton(
-                    onPressed: auth.loading
-                        ? null
-                        : () {
-                            if (f.validate()) {
-                              auth.sendPasswordReset(f.email.text.trim());
-                            }
-                          },
-                    child: const Text('Enviar enlace'),
-                  ),
-                ],
-              ),
+    return AuthScaffold(
+      title: 'Recupera tu contraseña',
+      subtitle: 'Te enviaremos un enlace a tu correo para restablecerla',
+      child: Form(
+        key: f.formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextFormField(
+              controller: f.email,
+              keyboardType: TextInputType.emailAddress,
+              decoration:
+                  appInput(context, 'Correo', icon: Icons.email_outlined),
+              validator: FormFieldsProvider.validateEmail,
             ),
-          ),
+            if (auth.error != null) ...[
+              const SizedBox(height: 12),
+              AuthMessage(auth.error!),
+            ],
+            if (auth.info != null) ...[
+              const SizedBox(height: 12),
+              AuthMessage(auth.info!, isError: false),
+            ],
+            const SizedBox(height: 20),
+            FilledButton(
+              onPressed: auth.loading
+                  ? null
+                  : () {
+                      if (f.validate()) {
+                        auth.sendPasswordReset(f.email.text.trim());
+                      }
+                    },
+              child: const Text('Enviar enlace'),
+            ),
+          ],
         ),
       ),
     );

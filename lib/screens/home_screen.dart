@@ -128,7 +128,14 @@ class _HomeView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catálogo'),
+                title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.bakery_dining),
+            SizedBox(width: 8),
+            Text('Gema'),
+          ],
+        ),
         actions: [
           IconButton(
             tooltip: 'Carrito',

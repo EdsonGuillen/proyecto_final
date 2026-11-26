@@ -19,8 +19,10 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+        return Card(
       clipBehavior: Clip.antiAlias,
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       child: InkWell(
         onTap: onEdit,
         child: Column(
@@ -63,7 +65,13 @@ class ProductCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text('\$${product.precio.toStringAsFixed(2)}'),
+                                               child: Text(
+                          '\$${product.precio.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ), 
                       ),
                       IconButton(
                         visualDensity: VisualDensity.compact,
